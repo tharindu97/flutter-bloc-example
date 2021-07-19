@@ -25,4 +25,9 @@ class CounterBloc {
   final _eventStreamController = StreamController<CounterAction>();
   StreamSink<CounterAction> get eventSink => _eventStreamController.sink;
   Stream<CounterAction> get eventStream => _eventStreamController.stream;
+
+  void dispose() {
+    _stateStreamController.close();
+    _eventStreamController.close();
+  }
 }

@@ -1,4 +1,5 @@
-import 'package:counterapp/counter_bloc.dart';
+import 'package:counterapp/bloc/counter_bloc.dart';
+import 'package:counterapp/views/view_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -28,6 +29,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final counterBloc = CounterBloc();
+
+  @override
+  void dispose() {
+    counterBloc.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,10 +53,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 initialData: 0,
                 stream: counterBloc.counterStream,
                 builder: (context, snapshot) {
-                  return Text(
-                    '${snapshot.data}',
-                    style: Theme.of(context).textTheme.headline4,
-                  );
+                  if (snapshot.hasData)
+                    return Text(
+                      '${snapshot.data}',
+                      style: Theme.of(context).textTheme.headline4,
+                    );
+
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                  }
+                  return Container();
                 }),
           ],
         ),
@@ -57,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FloatingActionButton(
+            heroTag: '1',
             onPressed: () {
               counterBloc.eventSink.add(CounterAction.Increment);
             },
@@ -64,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Icon(Icons.add),
           ),
           FloatingActionButton(
+            heroTag: '2',
             onPressed: () {
               counterBloc.eventSink.add(CounterAction.Decrement);
             },
@@ -71,11 +87,23 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Icon(Icons.remove),
           ),
           FloatingActionButton(
+            heroTag: '3',
             onPressed: () {
               counterBloc.eventSink.add(CounterAction.Reset);
             },
             tooltip: 'Reset',
             child: Icon(Icons.loop),
+          ),
+          FloatingActionButton(
+            heroTag: '4',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AllTodos()),
+              );
+            },
+            tooltip: 'Next',
+            child: Icon(Icons.next_plan),
           ),
         ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
